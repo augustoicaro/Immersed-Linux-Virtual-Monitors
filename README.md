@@ -411,6 +411,7 @@ done
   <tbody>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://devintrap.com"><img src="https://avatars.githubusercontent.com/u/13622537?v=4?s=100" width="100px;" alt="Paweł Gołaszewski"/><br /><sub><b>Paweł Gołaszewski</b></sub></a><br /><a href="#code-devintrap" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://alexfornuto.com"><img src="https://avatars.githubusercontent.com/u/2349184?v=4?s=100" width="100px;" alt="Alex Fornuto"/><br /><sub><b>Alex Fornuto</b></sub></a><br /><a href="#code-alexfornuto" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
