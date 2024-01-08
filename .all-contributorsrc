@@ -1,4 +1,21 @@
 {
   "projectName": "Immersed-Linux-Virtual-Monitors",
-  "projectOwner": "augustoicaro"
+  "projectOwner": "augustoicaro",
+  "files": [
+    "README.md"
+  ],
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributorsPerLine": 7,
+  "contributors": [
+    {
+      "login": "devintrap",
+      "name": "Paweł Gołaszewski",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13622537?v=4",
+      "profile": "https://devintrap.com",
+      "contributions": [
+        "code"
+      ]
+    }
+  ]
 }
