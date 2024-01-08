@@ -2,6 +2,8 @@
 
 **Unlock Immersed full productivity powers**
 
+[![All Contributors](https://img.shields.io/github/all-contributors/augustoicaro/Immersed-Linux-Virtual-Monitors?color=ee8449&style=flat-square)](#contributors)
+
 > [!CAUTION]  
 >
 > ## Disclaimer Notice - Use at Your Own Risk
