@@ -248,6 +248,7 @@ wget https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-main/os/x
 sudo pacman -U linux-neptune-61-headers-6.1.52.valve9-1-x86_64.pkg.tar.zst
 rm -rf linux-neptune-61-headers-6.1.52.valve9-1-x86_64.pkg.tar.zst
 ```
+If you have problems with fakeroot during the installation step, just rename the fakeroot config file with `sudo mv /etc/ld.so.conf.d/fakeroot.conf /etc/ld.so.conf.d/fakeroot.conf.bkp`
 
 - For Arch-based systems: You can use the AUR (Arch User Repository) to simplify the compilation and installation process. You can use an AUR helper like yay to compile and install the EVDI module:
 
