@@ -239,10 +239,14 @@ sudo apt install dkms libdrm-dev linux-headers-$(uname -r)
 sudo dnf install dkms libdrm-devel kernel-headers-$(uname -r)
 ```
 
-- For Steam Deck:
-
+- For Steam Deck(if sudo password isn't set yet run `passwd` in a terminal):
 ```sh
-sudo pacman -Syy base-devel holo-rel/linux-headers linux-neptune-headers holo-rel/linux-lts-headers git glibc gcc gcc-libs linux-api-headers libarchive libdrm dkms
+sudo steamos-readonly disable
+sudo pacman-key --init
+sudo pacman -Syy base-devel holo-3.5/linux-headers holo-3.5/linux-lts-headers git glibc gcc gcc-libs linux-api-headers libarchive libdrm dkms
+wget https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-main/os/x86_64/linux-neptune-61-headers-6.1.52.valve9-1-x86_64.pkg.tar.zst
+sudo pacman -U linux-neptune-61-headers-6.1.52.valve9-1-x86_64.pkg.tar.zst
+rm -rf linux-neptune-61-headers-6.1.52.valve9-1-x86_64.pkg.tar.zst
 ```
 
 - For Arch-based systems: You can use the AUR (Arch User Repository) to simplify the compilation and installation process. You can use an AUR helper like yay to compile and install the EVDI module:
@@ -255,6 +259,15 @@ yay -S evdi-git
 
 Now, you'll need to compile and install the EVDI kernel module:
 
+- For Steam Deck:
+```sh
+git clone https://github.com/DisplayLink/evdi.git
+cd evdi/module
+sed -i "s/6, 2, 0/6, 1, 0/g" evdi_fb.c
+make
+sudo make install_dkms
+```
+- For everything else:
 ```sh
 git clone https://github.com/DisplayLink/evdi.git
 cd evdi/module
@@ -313,7 +326,6 @@ Provider 4: id: 0x46f cap: 0x2, Sink Output crtcs: 1 outputs: 1 associated provi
 Provider 5: id: 0x295 cap: 0xb, Source Output, Sink Output, Sink Offload crtcs: 4 outputs: 2 associated providers: 1 name:Intel
 ```
 
-- Set the provider output source on the `DVI-I-X-Y` providers with the `xrandr` command. For example, to set a DVI-I-x provider as the source output with `xrandr --setprovideroutputsource 1 0`. In this example, "1" is the number of the `DVI-I-X-Y` provider, and "0" is the source output. You can repeat this step for other `DVI-I-X-Y` providers as needed.
 - Set the desired resolution for the virtual display using the `xrandr` command. For example, to set a resolution of "1920x1080," run `xrandr --addmode DVI-I-2–3 "1920x1080"`, where `DVI-I-2–3` is one of my `DVI-I-X-Y` monitors from `xrandr` output. You can create custom resolutions with `cvt` and `xrandr`, for example, create a custom "3840x1600" display resolution:
 
 ```sh
@@ -367,7 +379,24 @@ eDP1 connected primary 1920x1080+1720+1764 (normal left inverted right x axis y 
 VIRTUAL1 disconnected (normal left inverted right x axis y axis)
 ```
 
-Repeat the step to the other desired virtual providers.
+Repeat the step to the other desired virtual providers. To simplify the process you can use the following bash function in your `.bashrc` file:
+
+```sh
+force_connect() {
+  _display="${1}"   # e.g. "DVI-I-2-1"
+  _res="${2}"       # e.g. "1920x1080"
+  _pos="${3}"       # left-of, right-of, below, above
+  _base="${4}"      # e.g. "HDMI2"
+
+  xrandr --addmode "${_display}" "${_res}"
+  xrandr --output "${_display}" --mode "${_res}" "--${_pos}" "${_base}"
+
+  sysfs_id=$(echo "${_display}" | cut -d '-' -f 4)
+  sysfs_path=$(sudo find /sys/kernel/debug/dri -type d -name "DVI-I-${sysfs_id}")
+  echo on | sudo tee "${sysfs_path}/force" >/dev/null
+}
+````
+And execute the function in a new terminal, for example: `force_connect DVI-I-3-4 1920x1080 right-of eDP1`
 
 ### Limitations
 
