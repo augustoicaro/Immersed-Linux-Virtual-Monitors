@@ -1,7 +1,8 @@
 #!/bin/bash
-
-# Immersed on Pop!_OS
-
+#
+# immersed-setup: A consistent installation and configuration of Immersed.
+# Author: Alex Fornuto 2023 <alex@fornuto.com>
+#
 ###############################################################################
 # This script serves as documentation for how I installed Immersed and        #
 # configured the v42loopback device to load as needed by Immersed for the     #
