@@ -30,7 +30,7 @@ The script will perform the following actions:
 For custom desktop icons, I personally prefer to keep them separated from the rest of what is used by the system which is why I create a custom directory. The same can be said for appimages that I download and run. All other files are contained in directories where the system expects to find them.
 
 ## Waiver
-USE ONLY AT YOUR OWN RISK. If you do not know what a particular shell command will do, DO NOT USE IT. With shell scripting, there is NO UNDO; keep that in mind. Further, please do not blame me if this backfires or causes damage. As I just said, USE AT YOUR OWN RISK.
+This script is being offered as-is. Please use as your own discetion. While I have tested multiple times and tried to ensure the least amount of bugs, please note that there are no guarantees. If you do find an issue, please do reach out to me and I'll happily update it accordingly.
 READ_ME
 
 # Global variables for the script
