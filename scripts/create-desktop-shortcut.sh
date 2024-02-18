@@ -33,20 +33,36 @@ For custom desktop icons, I personally prefer to keep them separated from the re
 USE ONLY AT YOUR OWN RISK. If you do not know what a particular shell command will do, DO NOT USE IT. With shell scripting, there is NO UNDO; keep that in mind. Further, please do not blame me if this backfires or causes damage. As I just said, USE AT YOUR OWN RISK.
 READ_ME
 
+# Global variables for the script
 ICON_DIR="/usr/share/icons/custom"
 USER_APP_DIR="$HOME/Applications"
 SHORTCUT_DIR="/usr/share/applications"
 SHORTCUT_FILE="immersed.desktop"
 
+# Request user input for the specific files needed
 read -p "Please enter the path to your appimage file: " APPIMAGE_LOC
 read -p "Please enter the path to your custom icon file: " CUSTOM_ICON_LOC
 
+##
+# MOVE_FILE
+# Moves a file from one location to another, possibly as root as needed.
+##
 MOVE_FILE() {
     FULL_PATH="${1/#\~/$HOME}"
-    [[ $3 = 1 ]] && sudo mv $FULL_PATH $2 || mv $FULL_PATH $2
-    echo "'$FULL_PATH' has been moved to '$2'."
+
+    if [[ ! -f $FULL_PATH ]] ; then
+        echo "'$FULL_PATH' does not exist. Please make sure the file exists before continuing."
+        exit
+    else
+        [[ $3 = 1 ]] && sudo mv $FULL_PATH $2 || mv $FULL_PATH $2
+        echo "'$FULL_PATH' has been moved to '$2'."
+    fi
 }
 
+##
+# CREATE_DIR
+# Creates a directory in a specific location, possibly as root as neeed.
+##
 CREATE_DIR() {
     if [ ! -d "$1" ]; then
         [[ $2 = 1 ]] && sudo mkdir -p "$1" || mkdir -p "$1"
@@ -56,6 +72,10 @@ CREATE_DIR() {
     fi
 }
 
+##
+# WRITE_TO_FILE
+# Writes the desktop shortcut contents to the shortcut file.
+##
 WRITE_TO_FILE() {
     cat > $1 <<- EOM
 [Desktop Entry]
