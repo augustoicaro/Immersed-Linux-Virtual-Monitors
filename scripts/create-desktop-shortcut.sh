@@ -20,6 +20,7 @@ The script will perform the following actions:
 * Prompt the user for the location of the:
     * appimage file
     * icon file
+* Prompt the user to determine if they want webcam support enabled
 * Create the custom icon directory for custom desktop icons (/usr/share/icons/custom)
 * Create the applications directory for the appimage (~/Applications)
 * Move the appimage and icon files to the proper locations
@@ -42,6 +43,7 @@ SHORTCUT_FILE="immersed.desktop"
 # Request user input for the specific files needed
 read -p "Please enter the path to your appimage file: " APPIMAGE_LOC
 read -p "Please enter the path to your custom icon file: " CUSTOM_ICON_LOC
+read -p "Do you wish to check for webcam support on launch (y/n)? " WEBCAM_SUPPORT
 
 ##
 # MOVE_FILE
@@ -77,12 +79,14 @@ CREATE_DIR() {
 # Writes the desktop shortcut contents to the shortcut file.
 ##
 WRITE_TO_FILE() {
+    [[ $WEBCAM_SUPPORT = "y" ]] && EXEC="pkexec modprobe v4l2loopback;$USER_APP_DIR/immersed.appimage" || EXEC="$USER_APP_DIR/immersed.appimage"
+
     cat > $1 <<- EOM
 [Desktop Entry]
 Version=1.0
 Name=Immersed
 Comment=Immersed is the best way to get things done no matter where you are. We empower users all around the world to immerse themselves and others into a portable, distraction-free workspace, giving them deeper focus and increased productivity.
-Exec=$USER_APP_DIR/immersed.appimage
+Exec=$EXEC
 Icon=$ICON_DIR/immersed.png
 Terminal=false
 Type=Application
