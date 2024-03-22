@@ -16,6 +16,8 @@
   - [Summary](#summary)
   - [Intel driver](#intel-driver)
   - [Nvidia driver](#nvidia-driver)
+    - [Xorg.conf file exists](#xorgconf-file-exists)
+    - [Xorg.conf file don't exist](#xorgconf-file-dont-exist)
   - [EVDI module](#evdi-module)
     - [Dependencies](#dependencies)
     - [Compiling and Installing the EVDI Module](#compiling-and-installing-the-evdimodule)
@@ -109,40 +111,40 @@ You can also get some scripts of these steps shared on the [Discord server](http
 
 ## Nvidia driver
 
-If you have a system with a dedicated Nvidia graphics card, it doesn't inherently support virtual monitors as easily as the Intel driver. However, you can employ a clever workaround that involves configuring the Nvidia driver to force disconnected video outputs as if they were connected.
+If you have a system with a dedicated Nvidia graphics card, it doesn't inherently support virtual monitors as easily as the Intel driver. However, you can employ a clever workaround that involves configuring the Nvidia driver to force disconnected video outputs as if they were connected. This workaround only works for nvidia cards that controls the video output, you can check that with `xrandr --listofproviders` or `lspci -nnk | grep -i vga -A3`. For the `xrandr` it should show in the nvidia line `crtcs` and `outputs` greater than 0, and the `lspci` should list the nvidia card. **If this requerements are not meet, nvidia method will not work for your nvidia card**.
 
-To get started, you'll need to create and edit the Xorg configuration file. You can use the `nvidia-xconfig` command to help you with this. Open a terminal and run:
+First, you'll need to check if the Xorg configuration file exists. You can check the ouput of `cat /etc/X11/xorg.conf`, if there is output you can follow the [Xorg.conf file exists](#xorgconf-file-exists) section, if there is no output or no such file or directory error follow the [Xorg.conf file don't exist](#xorgconf-file-dont-exist) section.
 
-```sh
-sudo nvidia-xconfig
-```
+### Xorg.conf file exists
 
-This command generates the `/etc/X11/xorg.conf` file, which is crucial for configuring the Nvidia driver. It also saves the previous configuration as `/etc/X11/xorg.conf.bkp`.
+To get started, you'll need to edit the Xorg configuration file on `/etc/X11/xorg.conf`:
 
-If you're using a laptop with an integrated Intel graphics card that controls the laptop monitor, you need to add the Intel device to the Xorg configuration to enable the use of your laptop monitor. To do this, open the `/etc/X11/xorg.conf` file with a text editor. In this file, add the following lines under the
+> [!WARNING]
+> 
+> If you're using a laptop with an integrated Intel graphics card that controls the laptop monitor, you need to add the Intel device to the Xorg configuration to enable the use of your laptop monitor. To do this, open the `/etc/X11/xorg.conf` file with a text editor. In this file, add the following lines under the
+> 
+> ```sh
+> "Device" section:
+> Section "Device"
+>     Identifier     "intelGpu"
+>     Driver         "intel"
+>     VendorName     "Intel Corporation"
+>     BusID          "PCI:0:2:0"
+> EndSection
+> ```
+> 
+> The `BusID` value should match the output of the `lspci | grep VGA` command, which will list the available graphics devices. Look for the entry that corresponds to your integrated Intel graphics card and use that value.
+> 
+> For example, the `lspci | grep VGA` command might yield an output like this:
+> 
+> ```sh
+> 00:02.0 VGA compatible controller: Intel Corporation CoffeeLake-H GT2 [UHD Graphics 630]
+> 01:00.0 VGA compatible controller: NVIDIA Corporation TU106M [GeForce RTX 2070 Mobile] (rev a1)
+> ```
+> 
+> In this case, you'd use `"PCI:0:2:0"` as the `BusID`.
 
-```sh
-"Device" section:
-Section "Device"
-    Identifier     "intelGpu"
-    Driver         "intel"
-    VendorName     "Intel Corporation"
-    BusID          "PCI:0:2:0"
-EndSection
-```
-
-The `BusID` value should match the output of the `lspci | grep VGA` command, which will list the available graphics devices. Look for the entry that corresponds to your integrated Intel graphics card and use that value.
-
-For example, the `lspci | grep VGA` command might yield an output like this:
-
-```sh
-00:02.0 VGA compatible controller: Intel Corporation CoffeeLake-H GT2 [UHD Graphics 630]
-01:00.0 VGA compatible controller: NVIDIA Corporation TU106M [GeForce RTX 2070 Mobile] (rev a1)
-```
-
-In this case, you'd use `"PCI:0:2:0"` as the `BusID`.
-
-You'll need to identify the available monitors and their names to force-disconnect video outputs as connected. You can use the `xrand`r command for this. Run `xrandr | awk /connected/`. The output will display the connected and disconnected monitors. Note that the name of the monitor related to the physical port (such as HDMI) usually works as expected, while other types, like DisplayPort (DP), might not work and create video issues. Finding the working combination is a process of trial and error.
+You'll need to identify the available monitors and their names to force connect disconnect video monitors. You can use the **xrandr** command for this. Run `xrandr | awk /connected/`. The output will display the connected and disconnected monitors. Note that the name of the monitor related to the physical port (such as HDMI) usually works as expected, while other types, like DisplayPort (DP), might not work and create video issues. Finding the working combination is a process of trial and error.
 
 For example, the output could look like this:
 
@@ -201,6 +203,86 @@ EndSection
 That's it. Now, you should reboot your computer or log out to apply the changes. Once you've done this, you'll be able to adjust the resolution, position, and rotation of your monitors in the system's video settings.
 
 If you find that you're missing a particular resolution option or want to set a custom resolution, you can create a new mode for your monitor. For example, to add a custom "3840x1600" display resolution for `DP-2` monitor, use the `cvt` and `xrandr` commands:
+
+```sh
+xrandr --newmode "3840x1600"  521.75  3840 4128 4544 5248  1600 1603 1613 1658 -hsync +vsync
+xrandr --addmode DP-2 "3840x1600"
+xrandr --output DP-2 --mode "3840x1600"
+xrandr
+```
+
+You can create custom resolutions with the `cvt` command:
+
+```sh
+cvt 3840 1600
+
+output:
+# 3840x1600 59.96 Hz (CVT) hsync: 99.42 kHz; pclk: 521.75 MHz
+Modeline "3840x1600_60.00"  521.75  3840 4128 4544 5248  1600 1603 1613 1658 -hsync +vsync
+```
+
+### Xorg.conf file don't exist
+
+To get started, you'll need to edit the Xorg configuration file on `/usr/share/X11/xorg.conf.d/10-nvidia.conf` with `sudo` and add to the end of the file the following lines:
+
+```sh
+Section "Monitor"
+    Identifier     "Monitor0"
+    VendorName     "Unknown"
+    ModelName      "Unknown"
+    Option         "DPMS"
+EndSection
+
+Section "Screen"
+    Identifier     "Screen0"
+    Device         "nvidia"
+    Monitor        "Monitor0"
+    DefaultDepth    24
+    Option         "ConnectedMonitor" "CHANGE_HERE"
+    Option         "ModeValidation" "NoDFPNativeResolutionCheck,NoVirtualSizeCheck,NoMaxPClkCheck,NoHorizSyncCheck,NoVertRefreshCheck,NoWidthAlignmentCheck"
+    SubSection     "Display"
+        Depth       24
+    EndSubSection
+EndSection
+```
+
+Note that the `CHANGE_HERE` string on the `Section Screen` will need to be replace with the monitors that will be force connected. For that you'll need to identify the available monitors and their names. You can use the **xrandr** command for this. Run `xrandr | awk /connected/`. The output will display the connected and disconnected monitors. Note that the name of the monitor related to the physical port (such as HDMI) usually works as expected, while other types, like DisplayPort (DP), might not work and create video issues. Finding the working combination is a process of trial and error.
+
+For example, the output could look like this:
+
+```sh
+DP-0 disconnected 1080x1920+3640+0 right (normal left inverted right x axis y axis) 477mm x 268mm
+DP-1 disconnected (normal left inverted right x axis y axis)
+DP-2 disconnected 2560x1600+1080+164 (normal left inverted right x axis y axis) 0mm x 0mm
+DP-3 disconnected (normal left inverted right x axis y axis)
+HDMI-0 connected 1080x1920+0+10 right (normal left inverted right x axis y axis) 0mm x 0mm
+eDP1 connected primary 1920x1080+1720+1764 (normal left inverted right x axis y axis) 340mm x 190mm
+```
+
+Start replacing `CHANGE_HERE` by the connected monitor excluding `eDP` monitors, so the line should look like:
+
+```sh
+    Option         "ConnectedMonitor" "HDMI-0"
+```
+
+Reboot and the system should work as usual. The strategy is adding the monitor one by one and rebooting to get the combination that force connect all possible monitors. In my card, DP-1 and DP-3 breaks the X server and I end up with:
+
+```sh
+    Option         "ConnectedMonitor" "HDMI-0,DP-0,DP-2"
+```
+
+This configuration result in force connect `HDMI-0`, `DP-0`, and `DP-2` as noted in `xrandr | awk /connected/` output:
+
+```sh
+DP-0 connected 1080x1920+3640+0 right (normal left inverted right x axis y axis) 477mm x 268mm
+DP-1 disconnected (normal left inverted right x axis y axis)
+DP-2 connected 2560x1600+1080+164 (normal left inverted right x axis y axis) 0mm x 0mm
+DP-3 disconnected (normal left inverted right x axis y axis)
+HDMI-0 connected 1080x1920+0+10 right (normal left inverted right x axis y axis) 0mm x 0mm
+eDP1 connected primary 1920x1080+1720+1764 (normal left inverted right x axis y axis) 340mm x 190mm
+```
+
+If you find that you're missing a particular resolution option, or want to set a custom resolution, you can create a new mode for your monitor. For example, to add a custom "3840x1600" display resolution for `DP-2` monitor, use the `cvt` and `xrandr` commands:
 
 ```sh
 xrandr --newmode "3840x1600"  521.75  3840 4128 4544 5248  1600 1603 1613 1658 -hsync +vsync
@@ -364,7 +446,7 @@ clients  crtc-0  DVI-I-1  framebuffer  gem_names  internal_clients  name  state
 
 ```sh
 sudo sh -c "echo on > /sys/kernel/debug/dri/2/DVI-I-1/force"
-xrandr --listproviders
+xrandr | awk /connected/
 
 output:
 DP-0 connected 1080x1920+3640+0 right (normal left inverted right x axis y axis) 477mm x 268mm
