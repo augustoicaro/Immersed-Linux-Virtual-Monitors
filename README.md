@@ -493,17 +493,7 @@ You can easily find this product online by searching for `Headless ghost adapter
 
 ## Scripts
 
-Users of Immersed Linux Agent may encounter occasional crashes after making display changes. To mitigate this, you can use a simple script to restart Immersed when needed automatically. This can save you from manually restarting the agent, ensuring a smoother experience.
-
-```sh
-while :
-do
-echo "Immersed starting"
-./Immersed-x86_64.AppImage
-echo "Immersed stopped"
-sleep 1
-done
-```
+Please visit the [script folder](scripts/) and checkout the available community scripts for immersed setup, virtual monitors configuration, and more!
 
 ## References
 
