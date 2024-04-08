@@ -1,4 +1,4 @@
-# [Immersed](https://immersed.com/) Linux Virtual Monitors Guide
+# [Immersed](https://immersed.com/) Linux X11 Virtual Monitors Guide
 
 **Unlock Immersed full productivity powers**
 
@@ -12,7 +12,7 @@
 
 ## Summary
 
-- [Immersed Linux Virtual Monitors Guide](#immersed-linux-virtual-monitors-guide)
+- [Immersed Linux X11 Virtual Monitors Guide](#immersed-linux-x11-virtual-monitors-guide)
   - [Summary](#summary)
   - [Intel driver](#intel-driver)
   - [Nvidia driver](#nvidia-driver)
@@ -29,7 +29,7 @@
   - [References](#references)
   - [Contributors](#contributors)
 
-If you're reading this, you're likely in the same boat as me. You've discovered that Immersed can create virtual monitors for Windows and Mac, but on Linux, this feature is marked as "unsupported." This means you can't create virtual monitors directly through the Immersed agent. For now, the known workaround is to manually set up virtual monitors. While we eagerly await Wayland support for native virtual displays on the Immersed agent, we can only currently use it with X11 displays.
+If you're reading this, you're likely in the same boat as me. You've discovered that Immersed can create virtual monitors for Windows and Mac, but on Linux, this feature is marked as "unsupported" on X11. This means you can't create virtual monitors directly through the Immersed agent. For now, the known workaround is to manually set up virtual monitors. If you use Wayland, now immersed offer support for native virtual displays on the Immersed agent on **gnome Wayland**. You can access this options in Immersed client menu -> Setting -> Configure virtual displays. Other Wayland DE/Compositors are not supported, but there are ways to create virtual monitors manually as we do on X11, please check the linux-help channel in the [Discord server](https://discord.com/channels/428916969283125268/1100046559183380480) for more info.
 
 The workaround varies depending on your computer's video card. In this guide, we'll cover four methods to create a virtual display on Linux and suggest which method best suits each type of video card. Here's an overview of the methods:
 
@@ -38,6 +38,8 @@ The workaround varies depending on your computer's video card. In this guide, we
 - **AMD card**: [EVDI module](#evdi-module), [Headless ghost adapter](#headless-ghostadapter).
 
 It's important to note that while there's a "Dummy driver" option, I couldn't use it.
+
+You can fint the first setup scripts on the [script folder](scripts/immersed-setup/).
 
 > [!WARNING]
 >
@@ -107,11 +109,11 @@ xrandr --output VIRTUALx --mode "3840x1600"
 xrandr
 ```
 
-You can also get some scripts of these steps shared on the [Discord server](https://discord.com/channels/428916969283125268/1100046559183380480) on the script folder.
+You can also get some scripts of these steps shared on the [script folder](scripts/intel-scripts/).
 
 ## Nvidia driver
 
-If you have a system with a dedicated Nvidia graphics card, it doesn't inherently support virtual monitors as easily as the Intel driver. However, you can employ a clever workaround that involves configuring the Nvidia driver to force disconnected video outputs as if they were connected. This workaround only works for nvidia cards that controls the video output, you can check that with `xrandr --listofproviders` or `lspci -nnk | grep -i vga -A3`. For the `xrandr` it should show in the nvidia line `crtcs` and `outputs` greater than 0, and the `lspci` should list the nvidia card. **If this requerements are not meet, nvidia method will not work for your nvidia card**.
+If you have a system with a dedicated Nvidia graphics card, it doesn't inherently support virtual monitors as easily as the Intel driver. However, you can employ a clever workaround that involves configuring the Nvidia driver to force disconnected video outputs as if they were connected. This workaround only works for nvidia cards that controls the video output, you can check that with `xrandr --listproviders` or `lspci -nnk | grep -i vga -A3`. For the `xrandr` it should show in the nvidia line `crtcs` and `outputs` greater than 0, and the `lspci` should list the nvidia card. **If this requerements are not meet, nvidia method will not work for your nvidia card**.
 
 First, you'll need to check if the Xorg configuration file exists. You can check the ouput of `cat /etc/X11/xorg.conf`, if there is output you can follow the [Xorg.conf file exists](#xorgconf-file-exists) section, if there is no output or no such file or directory error follow the [Xorg.conf file don't exist](#xorgconf-file-dont-exist) section.
 
@@ -120,9 +122,9 @@ First, you'll need to check if the Xorg configuration file exists. You can check
 To get started, you'll need to edit the Xorg configuration file on `/etc/X11/xorg.conf`:
 
 > [!WARNING]
-> 
+>
 > If you're using a laptop with an integrated Intel graphics card that controls the laptop monitor, you need to add the Intel device to the Xorg configuration to enable the use of your laptop monitor. To do this, open the `/etc/X11/xorg.conf` file with a text editor. In this file, add the following lines under the
-> 
+>
 > ```sh
 > "Device" section:
 > Section "Device"
@@ -132,16 +134,16 @@ To get started, you'll need to edit the Xorg configuration file on `/etc/X11/xor
 >     BusID          "PCI:0:2:0"
 > EndSection
 > ```
-> 
+>
 > The `BusID` value should match the output of the `lspci | grep VGA` command, which will list the available graphics devices. Look for the entry that corresponds to your integrated Intel graphics card and use that value.
-> 
+>
 > For example, the `lspci | grep VGA` command might yield an output like this:
-> 
+>
 > ```sh
 > 00:02.0 VGA compatible controller: Intel Corporation CoffeeLake-H GT2 [UHD Graphics 630]
 > 01:00.0 VGA compatible controller: NVIDIA Corporation TU106M [GeForce RTX 2070 Mobile] (rev a1)
 > ```
-> 
+>
 > In this case, you'd use `"PCI:0:2:0"` as the `BusID`.
 
 You'll need to identify the available monitors and their names to force connect disconnect video monitors. You can use the **xrandr** command for this. Run `xrandr | awk /connected/`. The output will display the connected and disconnected monitors. Note that the name of the monitor related to the physical port (such as HDMI) usually works as expected, while other types, like DisplayPort (DP), might not work and create video issues. Finding the working combination is a process of trial and error.
@@ -322,6 +324,7 @@ sudo dnf install dkms libdrm-devel kernel-headers-$(uname -r)
 ```
 
 - For Steam Deck(if sudo password isn't set yet run `passwd` in a terminal):
+
 ```sh
 sudo steamos-readonly disable
 sudo pacman-key --init
@@ -330,6 +333,7 @@ wget https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-main/os/x
 sudo pacman -U linux-neptune-61-headers-6.1.52.valve9-1-x86_64.pkg.tar.zst
 rm -rf linux-neptune-61-headers-6.1.52.valve9-1-x86_64.pkg.tar.zst
 ```
+
 If you have problems with fakeroot during the installation step, just rename the fakeroot config file with `sudo mv /etc/ld.so.conf.d/fakeroot.conf /etc/ld.so.conf.d/fakeroot.conf.bkp`
 
 - For Arch-based systems: You can use the AUR (Arch User Repository) to simplify the compilation and installation process. You can use an AUR helper like yay to compile and install the EVDI module:
@@ -343,6 +347,7 @@ yay -S evdi-git
 Now, you'll need to compile and install the EVDI kernel module:
 
 - For Steam Deck:
+
 ```sh
 git clone https://github.com/DisplayLink/evdi.git
 cd evdi/module
@@ -350,7 +355,9 @@ sed -i "s/6, 2, 0/6, 1, 0/g" evdi_fb.c
 make
 sudo make install_dkms
 ```
+
 - For everything else:
+
 ```sh
 git clone https://github.com/DisplayLink/evdi.git
 cd evdi/module
@@ -479,7 +486,10 @@ force_connect() {
   echo on | sudo tee "${sysfs_path}/force" >/dev/null
 }
 ````
+
 And execute the function in a new terminal, for example: `force_connect DVI-I-3-4 1920x1080 right-of eDP1`
+
+You can also get some scripts of these steps shared on the [script folder](scripts/evdi-scripts/).
 
 ### Limitations
 
