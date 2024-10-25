@@ -2,14 +2,14 @@
 
 An assortment of community provided by the community. Each folder will contain a description of how to use the scripts on it.
 
-- EVDI scripts:
+- [EVDI scripts](evdi-scripts):
   - Tie fighter setup
-- Immersed setup:
+- [Immersed setup](immersed-setup):
   - Create desktop shortcut
   - Initial setup
-- Intel scripts:
+- [Intel scripts](intel-scripts):
   - Tie fighter setup
-- Wayland scripts:
+- [Wayland scripts](wayland-scripts):
   - Gnome virtual monitor
   - XDG Portal share screen
 

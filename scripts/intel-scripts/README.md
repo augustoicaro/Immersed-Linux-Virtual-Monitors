@@ -9,4 +9,4 @@ These scripts assume you have the driver configured on your Xorg. If configurati
 > - Setup your VR monitors as the layout presented on your system video settings.
 > - If using more different layout, is recomended save the VR layouts on the layout slots on Immersed monitor settings.
 
-- `immersed_tie_fighter`: Setup intel vds and start Immersed, reverting system monitor layout on Immersed exit.
+- i[mmersed_tie_fighter](immersed_tie_fighter.sh): Setup intel vds and start Immersed, reverting system monitor layout on Immersed exit.
