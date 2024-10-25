@@ -3,6 +3,7 @@
 An assortment of community provided by the community. Each folder will contain a description of how to use the scripts on it.
 
 - EVDI scripts:
+  - Tie fighter setup
 - Immersed setup:
   - Create desktop shortcut
   - Initial setup
