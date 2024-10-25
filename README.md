@@ -328,10 +328,8 @@ sudo dnf install dkms libdrm-devel kernel-headers-$(uname -r)
 ```sh
 sudo steamos-readonly disable
 sudo pacman-key --init
-sudo pacman -Syy base-devel holo-3.5/linux-headers holo-3.5/linux-lts-headers git glibc gcc gcc-libs linux-api-headers libarchive libdrm dkms
-wget https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-main/os/x86_64/linux-neptune-61-headers-6.1.52.valve9-1-x86_64.pkg.tar.zst
-sudo pacman -U linux-neptune-61-headers-6.1.52.valve9-1-x86_64.pkg.tar.zst
-rm -rf linux-neptune-61-headers-6.1.52.valve9-1-x86_64.pkg.tar.zst
+sudo pacman-key --populate archlinux holo
+sudo pacman -Syy base-devel holo-3.5/linux-headers holo-3.5/linux-lts-headers git glibc gcc gcc-libs linux-api-headers libarchive libdrm dkms linux-neptune-61-headers
 ```
 
 If you have problems with fakeroot during the installation step, just rename the fakeroot config file with `sudo mv /etc/ld.so.conf.d/fakeroot.conf /etc/ld.so.conf.d/fakeroot.conf.bkp`
@@ -345,18 +343,6 @@ yay -S evdi-git
 ### Compiling and Installing the EVDI Module
 
 Now, you'll need to compile and install the EVDI kernel module:
-
-- For Steam Deck:
-
-```sh
-git clone https://github.com/DisplayLink/evdi.git
-cd evdi/module
-sed -i "s/6, 2, 0/6, 1, 0/g" evdi_fb.c
-make
-sudo make install_dkms
-```
-
-- For everything else:
 
 ```sh
 git clone https://github.com/DisplayLink/evdi.git
