@@ -9,4 +9,4 @@ These scripts assume you have the EVDI kernel module installed and loaded with f
 > - Setup your VR monitors as the layout presented on your system video settings.
 > - If using more different layout, is recomended save the VR layouts on the layout slots on Immersed monitor settings.
 
-- `immersed_tie_fighter`: Setup EVDI vds and start Immersed, reverting system monitor layout on Immersed exit.
+- [immersed_tie_fighter](immersed_tie_fighter.sh): Setup EVDI vds and start Immersed, reverting system monitor layout on Immersed exit.
