@@ -8,6 +8,7 @@ An assortment of community provided by the community. Each folder will contain a
   - Create desktop shortcut
   - Initial setup
 - Intel scripts:
+  - Tie fighter setup
 - Wayland scripts:
   - Gnome virtual monitor
   - XDG Portal share screen
