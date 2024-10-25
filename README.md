@@ -225,7 +225,7 @@ Modeline "3840x1600_60.00"  521.75  3840 4128 4544 5248  1600 1603 1613 1658 -hs
 
 ### Xorg.conf file don't exist
 
-To get started, you'll need to edit the Xorg configuration file on `/usr/share/X11/xorg.conf.d/10-nvidia.conf` with `sudo` and add to the end of the file the following lines:
+To get started, you'll need to edit the Xorg configuration file on `/usr/share/X11/xorg.conf.d/10-nvidia.conf` or `/usr/share/X11/xorg.conf.d/nvidia.conf`(not as common) with `sudo` and add to the end of the file the following lines:
 
 ```sh
 Section "Monitor"
