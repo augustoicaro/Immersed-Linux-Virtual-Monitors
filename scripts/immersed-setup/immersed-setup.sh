@@ -147,9 +147,9 @@ if [[ $(grep v4l2loopback /proc/modules) ]]; then
 else
     if (($EUID != 0)); then
         if [[ -t 1 ]]; then
-            sudo modprobe card_label='Immersed' video_nr=7 exclusive_caps=1 max_buffers=2 devices=1
+            sudo modprobe v4l2loopback card_label='Immersed' video_nr=7 exclusive_caps=1 max_buffers=2 devices=1
         else
-            gksu modprobe card_label='Immersed' video_nr=7 exclusive_caps=1 max_buffers=2 devices=1
+            gksu modprobe v4l2loopback card_label='Immersed' video_nr=7 exclusive_caps=1 max_buffers=2 devices=1
         fi
         printf -- "\nModule enabled.\n\n"
     fi
